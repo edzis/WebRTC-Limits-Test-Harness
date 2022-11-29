@@ -316,51 +316,6 @@ class WebRtcLimitTestRun
 			// Destroy any output <video> elements generated during previous test runs
 			this._containerLocal.empty();
 			this._containerRemote.empty();
-			
-			// Create a regular expression for extracting the file extension from a URL
-			// (Do this once prior to the loop below for performance reasons)
-			let extRegex = new RegExp('.+\\.([A-Za-z0-9]+)');
-			
-			// Generate <video> elements to provide the media streams for our "local" peer
-			for (let i = 0; i < this._numMediaStreams; ++i)
-			{
-				// Create the <video> element and point it to our local media stream
-				// (Ensure we make the URLs unique to prevent duplicate stream IDs)
-				let newElem = this._createVideoElem(this._containerLocal)
-				this._localVideoElems.push(newElem);
-				for (let url of this._localVideoURLs)
-				{
-					let matches = extRegex.exec(url);
-					let extension = (matches !== null && matches.length > 0) ? matches[1] : 'unknown';
-					let source = $(document.createElement('source'));
-					source.attr('src', `${url}?i=${i}`);
-					source.attr('type', `video/${extension}`);
-					$(newElem).append(source);
-				}
-				
-				// Wait for the <video> element to be ready
-				if (newElem.readyState < 3) {
-					await PromiseUtils.waitForEvent(newElem, 'canplay');
-				}
-				
-				// Attempt to retrieve the media stream from the <video> element
-				this._mediaStreams.push(this._getMediaStream(newElem));
-			}
-			
-			// Add each video and audio track from the local media streams to our WebRTC peer connection
-			for (let stream of this._mediaStreams)
-			{
-				for (let track of stream.getTracks())
-				{
-					console.log('[Local Connection] Add track: ', track);
-					this._localConnection.addTrack(track, stream);
-				}
-			}
-			
-			// Store the duration of our first local media stream
-			if (this._localVideoElems.length > 0) {
-				this._mediaDuration = this._localVideoElems[0].duration;
-			}
 		}
 		catch (err)
 		{
