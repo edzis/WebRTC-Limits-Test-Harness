@@ -212,6 +212,24 @@ class WebRtcLimitTestRun
 			throw err;
 		}
 	}
+
+	cleanup() {
+		console.log('[Test Harness] Cleanup...');
+		this._mediaStreams.forEach((stream) => {
+			stream.getTracks().forEach((track) => {
+				this._localConnection.removeTrack(track, stream);
+				track.stop();
+			});
+		})
+		this._localVideoElems.forEach((elem) => {
+			elem.remove();
+			elem.srcObject = null;
+		})
+		this._remoteVideoElems.forEach((elem) => {
+			elem.remove();
+			elem.srcObject = null;
+		})
+	}
 	
 	// Configures our local media streams and peer connection settings
 	async _setup()
@@ -630,6 +648,7 @@ $(document).ready(() =>
 						let duration = (end - start) / 1000.0;
 						let overhead = duration - test.getMediaDuration();
 						logStatus(`Test succeeded in ${duration.toFixed(2)} seconds (video duration ${test.getMediaDuration().toFixed(2)} seconds, test run overhead ${overhead.toFixed(2)} seconds)`, true);
+						test.cleanup();
 					}
 					catch (err)
 					{
