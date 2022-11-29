@@ -598,21 +598,6 @@ $(document).ready(() =>
 					'maximum': 0
 				},
 				
-				'mediaStreams': {
-					
-					// The human-readable description of the parameter, in plural form
-					'description': {
-						'singular': 'media stream',
-						'plural': 'media streams'
-					},
-					
-					// The lambda function to return a test run for testing this parameter in isolation
-					'isolation': (v) => new WebRtcLimitTestRun(videoLocal, videoRemote, videoURLs, v, 1),
-					
-					// This will be populated with the maximum value for this parameter supported by the current web browser
-					'maximum': 0
-				}
-				
 			};
 			
 			// Hide the controls and show both the status container and video element container
